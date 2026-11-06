@@ -1,0 +1,34 @@
+# Hosting on Render (render.com) with nothing installed on your computer:
+#   Render dashboard → New → Blueprint → choose this GitHub repository → Apply.
+# It creates the website and its PostgreSQL database in Frankfurt, the Render region
+# nearest Nigeria. On first start the site sets up the database by itself; then open
+# https://<your-site>.onrender.com/setup to create the first administrator.
+services:
+  - type: web
+    name: nhf-website
+    runtime: node
+    region: frankfurt
+    # 'free' works for a trial, but it sleeps after 15 minutes without visitors.
+    plan: 0.5c-512mb
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nhf-db
+          property: connectionString
+      # The code asked for on /setup. Render asks you for it when you create the Blueprint.
+      - key: NHF_SETUP_CODE
+        sync: false
+      # Once the federation's domain is connected, add SITE_URL (such as https://www.example.ng)
+      # under Environment. Until then the site uses its onrender.com address.
+
+databases:
+  - name: nhf-db
+    databaseName: nhf
+    user: nhf
+    region: frankfurt
+    # 'free' expires after 30 days and has no backups: not for the live site.
+    plan: 0.1c-256mb
+    postgresMajorVersion: "16"

@@ -1,0 +1,35 @@
+{
+  "name": "nhf-website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nigeria Hockey Federation website with the Match Centre: news, national teams, live scores, tables, clubs and player statistics, and an admin for news, results, registrations and transfers.",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "db:load": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f db/001_schema.sql -f db/002_logic.sql -f db/004_site.sql",
+    "db:seed": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f db/003_demo_seed.sql",
+    "db:test": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f db/tests.sql",
+    "hash-password": "tsx scripts/hash-password.ts",
+    "db:content": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f db/005_site_content.sql",
+    "db:migrate": "tsx scripts/migrate.ts"
+  },
+  "dependencies": {
+    "next": "^15.5.7",
+    "postgres": "^3.4.7",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.2"
+  }
+}

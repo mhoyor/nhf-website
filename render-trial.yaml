@@ -1,0 +1,34 @@
+# A trial copy, to show the site before it is approved, on Render's free plans.
+#   Render dashboard → New → Blueprint → choose this repository →
+#   Blueprint Path: render-trial.yaml → Deploy Blueprint.
+# It has invented clubs, players and results so the Match Centre is not empty, says
+# "Trial copy" on every page, and is kept out of search engines.
+# Free plans: the site sleeps after 15 minutes without visitors (the next visit is slow),
+# and Render deletes the free database after 30 days. For the live site, use render.yaml.
+services:
+  - type: web
+    name: nhf-trial
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nhf-trial-db
+          property: connectionString
+      # The code asked for on /setup. Render asks you for it when you create the Blueprint.
+      - key: NHF_SETUP_CODE
+        sync: false
+      - key: NHF_DEMO_DATA
+        value: "true"
+
+databases:
+  - name: nhf-trial-db
+    databaseName: nhf
+    user: nhf
+    region: frankfurt
+    plan: free
+    postgresMajorVersion: "16"
