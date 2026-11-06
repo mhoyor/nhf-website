@@ -36,9 +36,10 @@ const evTime = (period: number | null, sec: number | null) => {
 
 /**
  * Scoreboard, quarter-by-quarter score and the match protocol. Updates arrive as
- * server-sent events; if those are cut, it polls every 20 seconds.
+ * server-sent events; if those are cut, it polls every 20 seconds. On serverless hosts
+ * (pollOnly), where long-lived connections are cut anyway, it polls from the start.
  */
-export function LiveScore({ initial, home, away, meta }: { initial: LiveSnapshot; home: SideInfo; away: SideInfo; meta: string }) {
+export function LiveScore({ initial, home, away, meta, pollOnly }: { initial: LiveSnapshot; home: SideInfo; away: SideInfo; meta: string; pollOnly?: boolean }) {
   const [snap, setSnap] = useState(initial);
   const [now, setNow] = useState(() => Date.now());
   const [polling, setPolling] = useState(false);
@@ -60,7 +61,7 @@ export function LiveScore({ initial, home, away, meta }: { initial: LiveSnapshot
         }
       }, 20_000);
     };
-    if ('EventSource' in window) {
+    if ('EventSource' in window && !pollOnly) {
       es = new EventSource(`/api/live/${initial.id}`);
       es.addEventListener('snapshot', (ev) => {
         failures = 0;
@@ -79,7 +80,7 @@ export function LiveScore({ initial, home, away, meta }: { initial: LiveSnapshot
       es?.close();
       if (poll) clearInterval(poll);
     };
-  }, [initial.id, initial.status, initial.confirmed]);
+  }, [initial.id, initial.status, initial.confirmed, pollOnly]);
 
   useEffect(() => {
     if (!isLive(snap.status)) return;

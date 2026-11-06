@@ -24,6 +24,19 @@ Everything happens in the browser: GitHub holds the code, Render builds and runs
 
 `/api/health` answers `"ok": true` once the database is reachable and up to date. Render uses it to tell whether a deploy worked.
 
+### Or on Vercel and Neon, with no card
+
+For a trial, Vercel (website) and Neon (database) both have free plans that need no card:
+
+1. **Neon** (neon.com): sign up with GitHub and create a project called `nhf` in a European region. Copy the connection string with **connection pooling turned off** (no `-pooler` in it).
+2. **Vercel** (vercel.com): sign up with GitHub, choose **Add New → Project** and import this repository. Before deploying, add these under **Environment Variables**, then click **Deploy**:
+   - `DATABASE_URL`: the Neon string;
+   - `NHF_SETUP_CODE`: a phrase you choose;
+   - `NHF_DEMO_DATA=true` for a trial copy.
+3. Open `/api/health`, then `/setup`, as above.
+
+On Vercel, live match pages refresh every 20 seconds instead of updating instantly, because Vercel cuts long-lived connections. Vercel's free Hobby plan is for non-commercial use, so the live site belongs on a paid plan: Vercel Pro, or Render from `render.yaml`.
+
 Other hosts work the same way: a Node 20+ server running `npm install && npm run build`, then `npm start`, with `DATABASE_URL` pointing at an empty PostgreSQL database.
 
 ## On a developer's computer

@@ -54,6 +54,7 @@ export default async function MatchPage({ params }: Props) {
       <LiveScore
         initial={snap}
         meta={meta}
+        pollOnly={Boolean(process.env.VERCEL)}
         home={{ teamId: m.homeTeamId, name: m.homeName ?? describeSlot(m.homeSlot), code: m.homeCode, colour: m.homeColour, href: m.homeClubSlug ? `/match-centre/clubs/${m.homeClubSlug}` : null, crest: m.homeCrest }}
         away={{ teamId: m.awayTeamId, name: m.awayName ?? describeSlot(m.awaySlot), code: m.awayCode, colour: m.awayColour, href: m.awayClubSlug ? `/match-centre/clubs/${m.awayClubSlug}` : null, crest: m.awayCrest }}
       />
